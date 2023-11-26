@@ -5,6 +5,14 @@ local window = require("aerial.window")
 
 local M = {}
 
+local function perform_key(key)
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == 'i' then
+    key = '<c-o>' .. key
+  end
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, false, true), mode, false)
+end
+
 ---@param winid integer
 ---@return nil|aerial.CursorPosition
 local function _get_current_lnum(winid)
@@ -248,6 +256,7 @@ M.select_symbol = function(item, winid, bufnr, opts)
 
   if opts.jump then
     vim.api.nvim_set_current_win(winid)
+    vim.schedule(function() perform_key("zv") end)
   else
     window.update_position(winid)
   end
